@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from 'react';
+import { useState } from 'react';
 import { GameOver_P, Main_Container } from '../styles';
 import Chessboard from 'chessboardjsx';
 import { DIV_SELECTION_STRING, FEN, SET_BOARD_WIDTH } from '../lib/constants';
@@ -12,12 +12,6 @@ export default function Main({ playerType }) {
   const [fen, setFen] = useState(chess.fen());
   const [isGameOver, setGameOver] = useState(false);
   const [selectedSquare, setSelectedSquare] = useState('');
-
-  useLayoutEffect(() => {
-    setTimeout(() => {
-      console.clear();
-    }, 300);
-  }, []);
 
   const handleReset = () => {
     chess.reset();

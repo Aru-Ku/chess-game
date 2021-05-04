@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Footer from './footer';
 import Header from './header';
 import Main, { ChoosePlayerType } from './main';
 
@@ -8,6 +9,7 @@ function App() {
     <>
       <Header />
       {!!playerType ? <Main playerType={playerType} /> : <ChoosePlayerType set={setPlayerType} />}
+      <Footer />
     </>
   );
 }
