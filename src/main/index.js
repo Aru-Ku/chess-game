@@ -16,6 +16,7 @@ export default function Main({ playerType }) {
   const handleReset = () => {
     chess.reset();
     setFen(chess.fen());
+    setGameOver(false);
   };
 
   const handleUndo = () => {
