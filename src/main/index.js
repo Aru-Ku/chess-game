@@ -1,47 +1,43 @@
+import { useLayoutEffect, useState } from 'react';
+import { GameOver_P, Main_Container } from '../styles';
 import Chessboard from 'chessboardjsx';
-import { useState } from 'react';
+import { DIV_SELECTION_STRING, FEN, SET_BOARD_WIDTH } from '../lib/constants';
 import Chess from 'chess.js';
 import Menu from './menu';
 
-import { MainComponent, GameOver } from './_styles';
+export { default as ChoosePlayerType } from './choosePlayerType';
 
-export default function Main() {
-  const [chess] = useState(Chess('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'));
+export default function Main({ playerType }) {
+  const [chess] = useState(Chess(FEN));
   const [fen, setFen] = useState(chess.fen());
   const [isGameOver, setGameOver] = useState(false);
   const [selectedSquare, setSelectedSquare] = useState('');
 
-  const handleSetFen = () => {
-    setFen(chess.fen());
-  };
-
-  const handleMove = move => {
-    removeHighlightedSquares();
-    if (chess.move(move)) {
-      setTimeout(() => {
-        const moves = chess.moves();
-
-        if (moves.length > 0) {
-          const computerMove = moves[Math.floor(Math.random() * moves.length)];
-          chess.move(computerMove);
-          handleSetFen();
-        }
-      }, 300);
-
-      handleSetFen();
-      if (chess.game_over()) setGameOver(true);
-    }
-  };
+  useLayoutEffect(() => {
+    setTimeout(() => {
+      console.clear();
+    }, 300);
+  }, []);
 
   const handleReset = () => {
     chess.reset();
-    handleSetFen();
+    setFen(chess.fen());
   };
 
   const handleUndo = () => {
     chess.undo();
     if (!chess.game_over()) setGameOver(false);
-    handleSetFen();
+    setFen(chess.fen());
+  };
+
+  const heightLightSquares = sq => {
+    removeHighlightedSquares();
+    const selection = DIV_SELECTION_STRING(sq);
+    const divs = document.querySelectorAll(selection);
+    Array.from(divs).forEach(div => {
+      div.style.border = '3px solid red';
+      div.style.borderRadius = '7px';
+    });
   };
 
   const removeHighlightedSquares = () => {
@@ -52,23 +48,34 @@ export default function Main() {
     });
   };
 
-  const heightLightSquares = sq => {
-    console.log(sq);
-    removeHighlightedSquares();
-    const selection = sq.reduce(
-      (a, v, i) => a + `div[data-squareid='${v.match(/[a-zA-Z][1-8]/)[0]}']${i === sq.length - 1 ? '' : ', '}`,
-      ''
-    );
-    const divs = document.querySelectorAll(selection);
-    Array.from(divs).forEach(div => {
-      div.style.border = '3px solid red';
-      div.style.borderRadius = '7px';
-    });
+  const handleSquareClicks = s => {
+    if (!selectedSquare) {
+      setSelectedSquare(() => s);
+      heightLightSquares([s, ...chess.moves({ square: s })]);
+    } else {
+      setSelectedSquare(() => '');
+      removeHighlightedSquares();
+      const move = { from: selectedSquare, to: s, promotion: 'q' };
+
+      if (chess.move(move)) {
+        if (playerType === 'Computer') {
+          setTimeout(() => {
+            const moves = chess.moves();
+            if (moves.length > 0) {
+              chess.move(moves[Math.floor(Math.random() * moves.length)]);
+              setFen(chess.fen());
+            }
+          }, 300);
+        }
+        setFen(chess.fen());
+        if (chess.game_over()) setGameOver(true);
+      }
+    }
   };
 
   return (
-    <MainComponent>
-      <Menu handleReset={handleReset} handleUndo={handleUndo} />
+    <Main_Container>
+      <Menu handleReset={handleReset} handleUndo={handleUndo} head={`You VS ${playerType}`} />
       <Chessboard
         allowDrag={() => false}
         position={fen}
@@ -79,28 +86,10 @@ export default function Main() {
         lightSquareStyle={{ backgroundColor: '#ffce9e' }}
         darkSquareStyle={{ backgroundColor: '#d18b47' }}
         sparePieces={!true}
-        calcWidth={({ screenWidth: w }) => {
-          if (w > 768) return 450;
-          if (w <= 768 && w > 560) return w - 200;
-          if (w <= 559) return w - 20;
-        }}
-        onSquareClick={s => {
-          if (!!selectedSquare || chess.get(s)?.color !== 'b') {
-            if (selectedSquare === '') {
-              setSelectedSquare(() => s);
-              heightLightSquares([s, ...chess.moves({ square: s })]);
-            } else {
-              setSelectedSquare(() => '');
-              handleMove({
-                from: selectedSquare,
-                to: s,
-                promotion: 'q',
-              });
-            }
-          }
-        }}
+        calcWidth={SET_BOARD_WIDTH}
+        onSquareClick={s => !isGameOver && handleSquareClicks(s)}
       />
-      {isGameOver ? <GameOver>GAME OVER</GameOver> : null}
-    </MainComponent>
+      {isGameOver ? <GameOver_P>GAME OVER</GameOver_P> : null}
+    </Main_Container>
   );
 }

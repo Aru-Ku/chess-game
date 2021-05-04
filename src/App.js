@@ -1,12 +1,13 @@
-// import useStore from './lib/store';
+import { useState } from 'react';
 import Header from './header';
-import Main from './main';
+import Main, { ChoosePlayerType } from './main';
 
 function App() {
+  const [playerType, setPlayerType] = useState('');
   return (
     <>
       <Header />
-      <Main />
+      {!!playerType ? <Main playerType={playerType} /> : <ChoosePlayerType set={setPlayerType} />}
     </>
   );
 }

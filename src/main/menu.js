@@ -1,8 +1,9 @@
-import { Wrapper } from './_styles';
+import { Menu_Wrapper } from '../styles';
 
-export default function Menu({ handleReset, handleUndo }) {
+export default function Menu({ handleReset, handleUndo, head }) {
   return (
-    <Wrapper>
+    <Menu_Wrapper>
+      <p>{head}</p>
       <div style={{ flexGrow: 1 }}></div>
       <button className="undo" onClick={handleUndo}>
         UNDO
@@ -10,6 +11,6 @@ export default function Menu({ handleReset, handleUndo }) {
       <button className="reset" onClick={handleReset}>
         RESET
       </button>
-    </Wrapper>
+    </Menu_Wrapper>
   );
 }
