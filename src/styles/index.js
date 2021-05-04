@@ -1,4 +1,26 @@
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
+
+/**
+ * GLOBAL STYLES
+ */
+export const GlobalStyles = createGlobalStyle`
+  *, *:after, *:before { box-sizing: border-box; }
+  body, h1, h2, h3, h4, h5, h6, p, ul, ol { margin: 0; padding: 0; }
+  ul, ol { list-style: none; }
+  a { color: inherit; text-decoration: none;}
+  input, button, textarea { outline: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+      'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  div#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+`;
 
 export const Header_Container = styled.header`
   box-shadow: 0 3px 5px 0 grey;
@@ -52,6 +74,7 @@ export const Main_Container = styled.main`
   width: 450px;
   margin: 10px auto 0;
   position: relative;
+  flex: 1;
   div[draggable] {
     cursor: pointer !important;
   }
@@ -86,14 +109,12 @@ export const ChoosePlayerType_Container = styled.div`
   display: flex;
   margin: 0 auto;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-
+  flex: 1;
   p {
     font-size: 1.4rem;
     font-weight: 600;
     margin: 2rem 0 1rem;
-    text-decoration: underline;
   }
 
   button {
@@ -121,5 +142,27 @@ export const ChoosePlayerType_Container = styled.div`
     button {
       width: 90%;
     }
+  }
+`;
+
+export const Footer_Container = styled.footer`
+  height: 100px;
+  width: 100%;
+  box-shadow: 0 -3px 5px 0 grey;
+  padding-top: 20px;
+  text-align: center;
+  h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding-bottom: 8px;
+    text-decoration: underline;
+  }
+  a {
+    margin: 0 8px;
+    cursor: pointer;
+  }
+  a img {
+    width: 30px;
+    height: 30px;
   }
 `;
